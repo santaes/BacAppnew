@@ -1,0 +1,47 @@
+{
+  "staging": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-bacapp2-staging-115252-authRole",
+      "UnauthRoleArn": "arn:aws:iam::734637710165:role/amplify-bacapp2-staging-115252-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::734637710165:role/amplify-bacapp2-staging-115252-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-bacapp2-staging-115252-deployment",
+      "UnauthRoleName": "amplify-bacapp2-staging-115252-unauthRole",
+      "StackName": "amplify-bacapp2-staging-115252",
+      "StackId": "arn:aws:cloudformation:eu-central-1:734637710165:stack/amplify-bacapp2-staging-115252/fab01930-059a-11ec-9478-02a565e59192",
+      "AmplifyAppId": "dgsywr3fvnduy",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-bacapp2-staging-115252-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+    },
+    "categories": {
+      "auth": {
+        "bacapp2dff7fbc6": {},
+        "cognitodff7fbc6": {},
+        "BacApp2": {}
+      },
+      "function": {
+        "BacApp2PostConfirmation": {
+          "deploymentBucketName": "amplify-bacapp2-staging-115252-deployment",
+          "s3Key": "amplify-builds/BacApp2PostConfirmation-2b796f7971724b637a42-build.zip"
+        }
+      }
+    }
+  },
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-signalclone-dev-154806-authRole",
+      "UnauthRoleArn": "arn:aws:iam::734637710165:role/amplify-signalclone-dev-154806-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::734637710165:role/amplify-signalclone-dev-154806-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-signalclone-dev-154806-deployment",
+      "UnauthRoleName": "amplify-signalclone-dev-154806-unauthRole",
+      "StackName": "amplify-signalclone-dev-154806",
+      "StackId": "arn:aws:cloudformation:eu-central-1:734637710165:stack/amplify-signalclone-dev-154806/ea77ee10-0998-11ec-a460-06c163c7e882",
+      "AmplifyAppId": "d1iojdzm75rhsn"
+    },
+    "categories": {
+      "auth": {
+        "bacapp213c85144": {}
+      }
+    }
+  }
+}
