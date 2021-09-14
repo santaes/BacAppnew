@@ -2,7 +2,7 @@ import React, {useEffect, useState, } from "react";
 import { View, Image, Text,  } from "react-native";
 import { Ionicons, MaterialCommunityIcons, } from "@expo/vector-icons";
 import { DataStore,Auth } from "aws-amplify";
-import { ChatRoomUser, User } from "../src/models";
+import { ChatRoom, ChatRoomUser, User } from "../src/models";
 import moment from "moment";
 
 
@@ -11,6 +11,31 @@ import moment from "moment";
 
 const ChatRoomHeader = ({id, children}) => {
     const [user, setUser] = useState<User | null>(null);
+    const [allUsers, setAllUsers] = useState<User[]>([]);
+    const [chatRoom, setChatRoom] = useState<ChatRoom | undefined>(undefined);
+
+    const fetchUsers = async () => {
+      const fetchedUsers = (await DataStore.query(ChatRoomUser))
+          .filter(chatRoomUser => chatRoomUser.chatroom.id === id )
+          .map(chatRoomUser => chatRoomUser.user);
+
+          setAllUsers(fetchedUsers);
+
+          
+
+     // setUsers(fetchedUsers);
+
+      const authUser = await Auth.currentAuthenticatedUser();
+
+      setUser(fetchedUsers.find(user => user.id !== authUser.attributes.sub) || null);
+      };
+
+      const fetchChatRoom = async () => {
+ 
+        DataStore.query(ChatRoom, id ).then(setChatRoom);
+      };
+
+     
 
     
 
@@ -19,22 +44,13 @@ const ChatRoomHeader = ({id, children}) => {
         if(!id) {
             return;
         }
-        const fetchUsers = async () => {
-            const fetchedUsers = (await DataStore.query(ChatRoomUser))
-                .filter(chatRoomUser => chatRoomUser.chatroom.id === id )
-                .map(chatRoomUser => chatRoomUser.user);
-
-                
-
-           // setUsers(fetchedUsers);
-
-            const authUser = await Auth.currentAuthenticatedUser();
-
-            setUser(fetchedUsers.find(user => user.id !== authUser.attributes.sub) || null);
-        };
+        
         fetchUsers();
+        fetchChatRoom();
 
     }, []);
+    
+    
 
     const getLastOnLineText = () => {
       if (!user?.lastOnlineAt) {
@@ -50,6 +66,11 @@ const ChatRoomHeader = ({id, children}) => {
         return  ` ${moment(user.lastOnlineAt).fromNow()}`;
       }
     };
+    const getUsernames = () => {
+      return allUsers.map(user => user.name).join(', ');
+    }
+
+    const isGroup = allUsers.length > 2;
 
 
 
@@ -65,9 +86,10 @@ const ChatRoomHeader = ({id, children}) => {
         height:50,
         borderBottomWidth:1,
         borderBottomColor:'#c7c7c790',
+        
         }}>
         <Image
-         source={{uri:user?.imageUri,}}
+         source={{uri: chatRoom?.imageUri || user?.imageUri,}}
          style={{width:35, height:35, borderRadius:20,left:65,}}
         />
         <View style={{height:60,alignItems:'center',}}>
@@ -81,8 +103,8 @@ const ChatRoomHeader = ({id, children}) => {
           height:30,
           left:35,
           
-        }}>{user?.name}</Text>
-        <Text  style={{color:'#00000070',width:140, height:20,fontSize:12,marginLeft:4,bottom:-2,left:43,}}>{getLastOnLineText()}</Text>
+        }}>{chatRoom?.name || user?.name}</Text>
+        <Text numberOfLines={1} style={{color:'#00000070',width:140, height:20,fontSize:12,marginLeft:4,bottom:-2,left:43,}}>{isGroup ? getUsernames() : getLastOnLineText()}</Text>
         </View >
            
           <Ionicons name="videocam-outline" size={26} color="black" style={{marginHorizontal:3,padding:3,left:50,}}/>

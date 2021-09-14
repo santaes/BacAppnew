@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { ActivityIndicator, Pressable, StyleSheet } from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet, Modal, } from 'react-native'
 import { View, Text } from 'react-native'
 
 import { DataStore } from '@aws-amplify/datastore';
@@ -11,7 +11,10 @@ import AudioPlayer from '../AudioPlayer';
 import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { Message as MessageModel } from '../../src/models';
 import MessageReply from '../MessageReply';
-import ReactNativeZoomableView from '@dudigital/react-native-zoomable-view/src/ReactNativeZoomableView';
+
+
+
+
 
 
 
@@ -98,6 +101,7 @@ const Message = (props) => {
         return <ActivityIndicator />
     };
     
+    
 
 
     return (
@@ -111,14 +115,17 @@ const Message = (props) => {
             {repliedTo && (
                 <MessageReply message={repliedTo} />
             )}
-            {message.image && (            
-                <View style={{marginBottom:message.content ? 10 : 0 }}>  
-                        <S3Image 
-                            imgKey={message.image}
-                            style={{width: '90%', aspectRatio: 3/4 }}
-                            resizeMode='contain'   
-                        />
-                </View>           
+            {message.image && (  
+                         
+                <View style={{marginBottom:message.content ? 10 : 0 }}> 
+
+                    <S3Image 
+                    imgKey={message.image}
+                    style={{width: '90%', aspectRatio: 3/4, }}
+                    resizeMode='contain'
+                    />
+                </View> 
+                           
             )}
             {soundURI && (<AudioPlayer soundURI={soundURI} />)}
             {!!message.content && <Text style={styles.text}>{message.content}</Text>}
