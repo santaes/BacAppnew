@@ -6,15 +6,16 @@ import { Feather, Ionicons } from '@expo/vector-icons';
 
 
 
-export default function UserItem({ user, onPress, isSelected  }) {
+export default function UserItem({ user, onPress, onLongPress, isSelected, isAdmin = false,  }) {
 
     return (
-        <Pressable onPress={onPress} style={styles.container}>
+        <Pressable onPress={onPress} onLongPress={onLongPress} style={styles.container}>
             <Image source={{uri:user.imageUri}} style={styles.image} />
 
             <View style={styles.rightContainer}>
                <View style={styles.row}>
                 <Text style={styles.name}>{user.name}</Text>
+                {isAdmin && <Text>Admin</Text>}
                </View>
             </View>
             {isSelected !== undefined  &&( <Ionicons name={isSelected ? "checkmark-circle-sharp" : "ellipse-outline"} size={24} color={isSelected ? '#4169E9' : '#56565670' } />)}

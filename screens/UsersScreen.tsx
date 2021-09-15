@@ -57,26 +57,21 @@ export default function UsersScreen() {
   // Create a chatroom 
   const newChatRoomData =  {
     newMessages: 0,
-    admin : dbUser,
+    Admin : dbUser,
 
 
   };
   if (users.length > 1) {
     newChatRoomData.name = 'New Group';
-    newChatRoomData.imageUri = 'https://111111abab.s3.eu-central-1.amazonaws.com/group.png';
+    newChatRoomData.imageUri = 'https://www.seekpng.com/png/detail/967-9676420_group-icon-org2x-group-icon-orange.png';
   }
   const newChatRoom = await DataStore.save(new ChatRoom(newChatRoomData));
 
   // connect Auth User
   
   if (dbUser) {
-    await addUserToChatRoom(dbUser, newChatRoom);
-    
+    await addUserToChatRoom(dbUser, newChatRoom);  
   }
-
-  
-
-
     // connect Clicked User
     await Promise.all(
       users.map((user) => addUserToChatRoom(user, newChatRoom))

@@ -3,7 +3,7 @@ import { NavigationContainer, DefaultTheme, DarkTheme, useNavigation, } from '@r
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName,Image,Text, View, Pressable, } from 'react-native';
-import { SimpleLineIcons, Ionicons, MaterialCommunityIcons,} from '@expo/vector-icons';
+import { SimpleLineIcons, } from '@expo/vector-icons';
 
 
 
@@ -16,6 +16,8 @@ import { RootStackParamList,  } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import ChatRoomScreen from '../screens/ChatRoomScreen';
 import ChatRoomHeader from './ChatRoomHeader';
+import GroupInfoScreen from '../screens/GroupInfoScreen';
+
 
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
@@ -58,12 +60,16 @@ function RootNavigator() {
        options={({ route }) => ({
           headerTitle: () =>  <ChatRoomHeader id={route.params?.id}  />,
           headerShadowVisible:false,
-          
-          
-          
-        })}
-        
+        })} 
       /> 
+      <Stack.Screen
+        name="GroupInfoScreen"
+        component={GroupInfoScreen}
+        options={{
+          headerTitle: "New Group",
+          headerShadowVisible:true,
+        }}
+      />
       <Stack.Screen
         name="UsersScreen"
         component={UsersScreen}

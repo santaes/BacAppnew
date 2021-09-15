@@ -1,4 +1,4 @@
-import { Auth } from 'aws-amplify';
+import { Auth, DataStore } from 'aws-amplify';
 
 import * as React from 'react';
 
@@ -59,7 +59,8 @@ export default function ModalScreen() {
 }
 
 
-const logOut = () => {
+const logOut = async () => {
+  await DataStore.clear();
   Auth.signOut();
 }
 
