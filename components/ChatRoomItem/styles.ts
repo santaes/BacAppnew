@@ -4,18 +4,21 @@ const styles = StyleSheet.create({
     rightContainer:{
       flex: 1,
       justifyContent: 'center',
+     
     },
   
     container:{
       flexDirection:'row',
       padding: 16,
+      marginBottom:-5,
+      marginTop:5
       
       
     },
     row:{
       flexDirection:'row',
       justifyContent:'space-between',
-  
+      
     },
     text:{
       

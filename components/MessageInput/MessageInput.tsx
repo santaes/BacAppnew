@@ -106,12 +106,12 @@ uuidv4();
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ImagePicker.MediaTypeOptions.All,
-          allowsEditing: true,
+          allowsEditing: false,
           aspect: [9, 16],
           quality: 0.8,
           maxWidth:'100%',
           maxHeight:'100%',
-          selectionLimit:0,
+          selectionLimit:10,
           mediaType:'mixed',
         });
     
@@ -263,7 +263,7 @@ uuidv4();
         <KeyboardAvoidingView
          style={[styles.root,{height: isEmojiPickerOpen ? '50%' : 'auto'}]}
          behavior={Platform.OS === "ios" ? "padding" : "height"}
-         keyboardVerticalOffset={70}
+         keyboardVerticalOffset={100}
          >
            {messageReplyTo && (
              <View style={{backgroundColor:'#59595920', borderRadius:20,padding:5, flexDirection:'row',}}>

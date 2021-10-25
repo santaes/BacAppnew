@@ -40,6 +40,9 @@ export declare class Message {
 }
 
 export declare class ChatRoom {
+  static filter(arg0: (chatRoom: any) => boolean): import("react").SetStateAction<ChatRoom | null> {
+      throw new Error('Method not implemented.');
+  }
   readonly id: string;
   readonly newMessages?: number;
   readonly LastMessage?: Message;

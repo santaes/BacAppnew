@@ -1,20 +1,19 @@
 import React, {useState, useEffect} from 'react'
-import { ActivityIndicator, Pressable, StyleSheet, Modal, } from 'react-native'
+import { ActivityIndicator, Pressable, StyleSheet,  Alert, ScrollView, Dimensions,Animated} from 'react-native'
 import { View, Text } from 'react-native'
 
 import { DataStore } from '@aws-amplify/datastore';
 import { User } from '../../src/models';
 import { Auth, Storage } from 'aws-amplify';
 import {S3Image} from 'aws-amplify-react-native';
-import { useWindowDimensions } from 'react-native';
+
 import AudioPlayer from '../AudioPlayer';
 import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { Message as MessageModel } from '../../src/models';
 import MessageReply from '../MessageReply';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 
-
-
-
+import Lightbox from 'react-native-lightbox-zoom';
 
 
 
@@ -37,8 +36,12 @@ const Message = (props) => {
     const [user, setUser] = useState<User|undefined>();
     const [isMe, setIsMe] = useState<boolean|null>(null);
     const [soundURI, setSoundURI] = useState<any>(null);
+    const [isDeleted, setIsDeleted] = useState(false);
+    
 
-    const {width} = useWindowDimensions();
+    
+    const { showActionSheetWithOptions } = useActionSheet();
+
 
 
     useEffect(() => {
@@ -60,9 +63,14 @@ const Message = (props) => {
 
     useEffect(() => {
         const subscription = DataStore.observe(MessageModel, message.id).subscribe(msg => {
-          //console.log(msg.model, msg.opType, msg.element);
-          if (msg.model === MessageModel && msg.opType === 'UPDATE') {
-            setMessage((message) => ({...message, ...msg.element}));
+          
+          if (msg.model === MessageModel  ) {
+            if (msg.opType === 'UPDATE')  {
+                setMessage((message) => ({...message, ...msg.element}));
+            } else if (msg.opType === 'DELETE') {
+                setIsDeleted(true);
+            }
+            
           }
         });
   
@@ -93,7 +101,57 @@ const Message = (props) => {
         if (isMe === false  && message.status !== "READ") {
            await  DataStore.save(MessageModel.copyOf(message, (updated) => {updated.status = "READ";})); 
         }
+    };
+
+    const deleteMessage = async () => {
+       await DataStore.delete(message);
+        
     }
+
+    const confirmDelete =  () => {
+        Alert.alert("Confirm delete", "Are you sure you want do delete the message?",[
+            {
+                text:"Delete",
+                onPress: deleteMessage,
+                style:"destructive",
+            },
+            {
+                text:"Cancel",
+
+
+            },
+        ]
+        );
+      
+    };
+
+
+    const onActionPress = (index) => {
+
+        if(index === 0) {
+            setAsMessageReply();
+        } else if(index === 1) {
+            if (isMe) {
+             confirmDelete();
+            } else {
+                Alert.alert("Warning", "This is not your message");
+            }   
+        }
+    };
+
+    const openActionMenu = () => {
+        const options = ["Reply", "Delete", "Cancel"];
+        const destructiveButtonIndex = 1;
+        const cancelButtonIndex = 2;
+        showActionSheetWithOptions(
+         {
+            options, 
+            destructiveButtonIndex, 
+            cancelButtonIndex,
+         },
+         onActionPress
+        );
+    };
 
 
 
@@ -102,11 +160,11 @@ const Message = (props) => {
     };
     
     
-
+    
 
     return (
         <Pressable
-            onLongPress={setAsMessageReply}
+            onLongPress={openActionMenu}
             style={[
                 styles.container, isMe ? styles.rightContainer : styles.leftContainer,
                 {width: soundURI ? '75%' : 'auto'}
@@ -116,19 +174,19 @@ const Message = (props) => {
                 <MessageReply message={repliedTo} />
             )}
             {message.image && (  
-                         
-                <View style={{marginBottom:message.content ? 10 : 0 }}> 
-
-                    <S3Image 
-                    imgKey={message.image}
-                    style={{width: '90%', aspectRatio: 3/4, }}
-                    resizeMode='contain'
-                    />
-                </View> 
-                           
+                
+                    <View style={{marginBottom:message.content ? 10 : 0 , }}>  
+                       <Lightbox >
+                            <S3Image 
+                            imgKey={message.image}
+                            style={{ aspectRatio: 9/13.5, }}
+                            resizeMode='contain'
+                            /> 
+                        </Lightbox>
+                    </View>
             )}
             {soundURI && (<AudioPlayer soundURI={soundURI} />)}
-            {!!message.content && <Text style={styles.text}>{message.content}</Text>}
+            {!!message.content && <Text style={styles.text}>{isDeleted ? "message deleted" : message.content}</Text>}
             {isMe && !!message.status && message.status !== "SENT" && <Ionicons 
             name={message.status=== 'DELIVERED' ? "checkmark-sharp" : "checkmark-done-sharp"} 
             size={20} color='#4169E9' 
@@ -139,6 +197,7 @@ const Message = (props) => {
 
 
 const styles = StyleSheet.create({
+
     container:{
         
         padding: 10,

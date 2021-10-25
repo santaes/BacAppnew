@@ -1,15 +1,21 @@
+import { SimpleLineIcons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/core';
 import {  Auth, DataStore } from 'aws-amplify';
 import React, { useEffect, useState } from 'react'
-import { View, Text,StyleSheet, FlatList, Alert } from 'react-native'
+import { View, Text,StyleSheet, FlatList, Alert, Pressable } from 'react-native'
 import UserItem from '../../components/UserItem';
+import { useNavigation } from "@react-navigation/core";
 
 import { ChatRoom, ChatRoomUser, User } from '../../src/models';
+
+
+
+
 
 const GroupInfoScreen = () => {
     const [chatRoom, setChatRoom] = useState<ChatRoom|null>(null);
     const [allUsers, setAllUsers] = useState<User[]>([]);
-
+    const navigation = useNavigation();
     const route = useRoute();
 
     useEffect(() => {
@@ -44,12 +50,10 @@ const GroupInfoScreen = () => {
         const authData = await Auth.currentAuthenticatedUser();
         if (chatRoom?.Admin?.id !== authData.attributes.sub) {
             Alert.alert("You are not the Admin");
-        }
-
-        if(user.id === chatRoom?.Admin?.id) {
-            Alert.alert("You are the Admin");
             return;
         }
+
+        
         Alert.alert(
             "Confirm delete",
             `Are you sure you want to delete ${user.name} from the group `,
@@ -64,7 +68,7 @@ const GroupInfoScreen = () => {
                 }
             ]
         )
-    }
+    };
 
     const deleteUser = async (user) => {
         const chatRoomUsersToDelete = await (await DataStore.query(ChatRoomUser)).filter(cru => cru.chatroom.id === chatRoom.id && cru.user.id === user.id);
@@ -74,6 +78,40 @@ const GroupInfoScreen = () => {
         }
         
     };
+    const confirmDeleteChatRoom = async  (chatRoom) => {
+
+        
+        
+
+        
+        Alert.alert(
+            "Confirm delete",
+            `Are you sure you want to delete Chat Room  `,//${chatRoom.name} 
+            [
+                {
+                    text: "Delete",
+                    onPress:() => deleteChatRoom(ChatRoom),
+                    style: 'destructive',
+                },
+                {
+                    text:"Cancel",
+                }
+            ]
+        )
+    };
+
+    const deleteChatRoom = async (chatRoom) => {
+        const chatRoomToDelete = await (await DataStore.query(chatRoom));
+        if(chatRoomToDelete.length > 0 ) {
+            await DataStore.delete(chatRoomToDelete[0]);
+            
+            return navigation.navigate('HomeScreen');       
+        }
+        
+    };
+    
+    
+    const isGroup = allUsers.length > 2;
 
     return (
         <View style={styles.root}>
@@ -87,8 +125,16 @@ const GroupInfoScreen = () => {
                 user={item} 
                 isAdmin={chatRoom?.Admin?.id === item.id}
                 onLongPress={() => confirmDelete(item)}
+
             />)}
             />
+            <Pressable onPress={confirmDeleteChatRoom} >
+                <View style={{alignItems:'flex-start',flexDirection:'row',marginHorizontal:5,marginVertical:15}}>
+                    <SimpleLineIcons  
+                        name="trash" size={24} color="red" />
+                        <Text style={{margin:5,}}>{(isGroup ? "Delete Group" : "Delete Chat")}</Text>
+                </View>
+            </Pressable>
         </View>
     );
 };

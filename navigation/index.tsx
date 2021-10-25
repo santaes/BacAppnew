@@ -41,7 +41,7 @@ function RootNavigator() {
        component={HomeScreen}
        options={{
           headerTitle: HomeHeader ,
-          headerShadowVisible:false,
+          headerShadowVisible:true,
           
         }}
         
@@ -59,7 +59,7 @@ function RootNavigator() {
        component={ChatRoomScreen}
        options={({ route }) => ({
           headerTitle: () =>  <ChatRoomHeader id={route.params?.id}  />,
-          headerShadowVisible:false,
+          headerShadowVisible:true,
         })} 
       /> 
       <Stack.Screen
@@ -95,17 +95,17 @@ function RootNavigator() {
       justifyContent:'space-between',
       width: '100%',
       padding: 10,
-      alignItems:'center',
       borderBottomWidth:1,
       borderBottomColor:'#c7c7c790',
       right:15,
       height:60,
+      
 
     }}>
       <Pressable onPress={() => navigation.navigate('ModalScreen')} style={{width:40,height:40}}>
         <Image
           source={{uri:'https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/elon.png'}}
-          style={{width:35, height:35, borderRadius:20,left:15,}}
+          style={{width:35, height:35, borderRadius:20,left:15,bottom:5}}
         />
       </Pressable>
       

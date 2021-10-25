@@ -11,9 +11,12 @@ import Amplify,{Auth,Hub,DataStore} from "aws-amplify";
 import config from "./src/aws-exports";
 import {withAuthenticator} from 'aws-amplify-react-native';
 Amplify.configure(config);
-import { LogBox } from 'react-native';
+import { LogBox , } from 'react-native';
 import { Message, User } from './src/models';
-import moment from 'moment';
+
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+
+
 
 LogBox.ignoreLogs(['Setting a timer']);
 
@@ -23,6 +26,7 @@ LogBox.ignoreLogs(['Setting a timer']);
   const colorScheme = useColorScheme();
 
   const [user, setUser] = useState<User | null>(null);
+  
 
   useEffect(() => {
         // Create listener
@@ -47,6 +51,8 @@ LogBox.ignoreLogs(['Setting a timer']);
      return () => listener();
   },[]);
 
+
+
   useEffect(() => {
     if (!user) {return}
     const subscription = DataStore.observe(User, user.id).subscribe(msg => {
@@ -64,11 +70,13 @@ LogBox.ignoreLogs(['Setting a timer']);
   },[])
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      updateLastOnLine();
+    const interval = setInterval(async () => {
+      await updateLastOnLine();
     }, 1 * 60 * 1000);
     return () => clearInterval(interval);
   },[user])
+
+  
 
   const fetchUser = async () => {
     const userData = await Auth.currentAuthenticatedUser();
@@ -97,10 +105,12 @@ LogBox.ignoreLogs(['Setting a timer']);
     return null;
   } else {
     return (
-      <SafeAreaProvider>
+    <SafeAreaProvider>
+      <ActionSheetProvider>
         <Navigation colorScheme={colorScheme} />
+      </ActionSheetProvider>    
         <StatusBar />
-      </SafeAreaProvider>
+    </SafeAreaProvider>
     );
   }
 }

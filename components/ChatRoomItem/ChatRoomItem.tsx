@@ -11,6 +11,7 @@ export default function ChatRoomItem({ chatRoom }) {
     const [users, setUsers] = useState<User[]>([]); // all users in this chatroom
     const [user, setUser] = useState<User|null>(null); //the display user
     const [lastMessage, setLastMessage] = useState<Message|undefined>(undefined);
+    const [isLoading, setIsLoading] = useState(true);
     
 
     const navigation = useNavigation();
